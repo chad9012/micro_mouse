@@ -1,0 +1,93 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+    <!-- Define properties for ultrasonic sensor dimensions -->
+    <xacro:property name="ultrasound_length" value="0.005"/>
+    <xacro:property name="ultrasound_width" value="0.05"/>
+    <xacro:property name="ultrasound_height" value="0.025"/>
+
+    <!-- Xacro macro to define an ultrasonic sensor -->
+    <xacro:macro name="ultrasonic_sensor" params="sensor_name link_xyz link_rpy">
+        <!-- Define the sensor link -->
+        <link name="${sensor_name}_link">
+            <visual>
+                <geometry>
+                    <box size="${ultrasound_length} ${ultrasound_width} ${ultrasound_height}"/>
+                </geometry>
+                <material name="grey"/>
+            </visual>
+            <collision>
+                <geometry>
+                    <box size="${ultrasound_length} ${ultrasound_width} ${ultrasound_height}"/>
+                </geometry>
+            </collision>
+            <xacro:box_inertia m="0.1" l="${ultrasound_length}" w="${ultrasound_width}" h="${ultrasound_height}" xyz="0 0 0" rpy="0 0 0"/>
+        </link>
+
+        <!-- Define the joint attaching the sensor to the robot -->
+        <joint name="base_${sensor_name}_joint" type="fixed">
+            <parent link="base_link"/>  <!-- Change parent link if necessary -->
+            <child link="${sensor_name}_link"/>
+            <origin xyz="${link_xyz}" rpy="${link_rpy}"/>
+        </joint>
+
+        <!-- Gazebo plugin and sensor definition -->
+        <gazebo reference="${sensor_name}_link">
+            <material>Gazebo/Red</material>
+            <sensor name="${sensor_name}" type="ray">
+                <always_on>true</always_on>
+                <visualize>true</visualize>
+                <update_rate>5</update_rate>
+                <ray>
+                    <scan>
+                        <horizontal>
+                            <samples>5</samples>
+                            <resolution>1.000000</resolution>
+                            <min_angle>-0.12</min_angle>
+                            <max_angle>0.12</max_angle>
+                        </horizontal>
+                        <vertical>
+                            <samples>5</samples>
+                            <resolution>1.000000</resolution>
+                            <min_angle>-0.01</min_angle>
+                            <max_angle>0.01</max_angle>
+                        </vertical>
+                    </scan>
+                    <range>
+                        <min>0.02</min>
+                        <max>10</max>
+                        <resolution>0.01</resolution>
+                    </range>
+                    <noise>
+                        <type>gaussian</type>
+                        <mean>0.0</mean>
+                        <stddev>0.01</stddev>
+                    </noise>
+                </ray>
+                <plugin name="${sensor_name}_sensor" filename="libgazebo_ros_ray_sensor.so">
+                    <ros>
+                        <remapping>~/out:=${sensor_name}_range</remapping>
+                    </ros>
+                    <output_type>sensor_msgs/Range</output_type>
+                    <radiation_type>ultrasound</radiation_type>
+                    <frame_name>${sensor_name}_link</frame_name>
+                </plugin>
+            </sensor>  
+        </gazebo>
+    </xacro:macro>
+
+    <!-- Instantiate the macro for each sensor (front, rear, left, right) -->
+
+    <!-- Front ultrasonic sensor -->
+    <xacro:ultrasonic_sensor sensor_name="front_ultrasonic_sensor" link_xyz="${base_length/2 + ultrasound_length/2.0} 0 ${base_height/2.0}" link_rpy="0 0 0"/>
+
+    <!-- Rear ultrasonic sensor -->
+    <xacro:ultrasonic_sensor sensor_name="rear_ultrasonic_sensor" link_xyz=" ${-base_length/2 - ultrasound_length/2.0} 0 ${base_height/2.0}" link_rpy="0 0 3.1415"/>
+
+    <!-- Left ultrasonic sensor -->
+    <xacro:ultrasonic_sensor sensor_name="left_ultrasonic_sensor" link_xyz="0 ${base_width/2.0 + ultrasound_length/2.0} ${base_height/2.0}" link_rpy="0 0 1.5708"/>
+
+    <!-- Right ultrasonic sensor -->
+    <xacro:ultrasonic_sensor sensor_name="right_ultrasonic_sensor" link_xyz="0 ${-base_width/2.0 - ultrasound_length/2.0} ${base_height/2.0}" link_rpy="0 0 -1.5708"/>
+
+</robot>
