@@ -1,6 +1,7 @@
 import rclpy
 from rclpy.node import Node
 from nav_msgs.msg import Odometry
+from std_msgs.msg import String  # Import the message type for publishing the area
 import time
 from datetime import datetime
 
@@ -15,6 +16,9 @@ class Evaluator(Node):
             self.odom_callback,
             10
         )
+
+        # Publisher to publish the robot's current area
+        self.area_publisher = self.create_publisher(String, '/robot_area', 10)
 
         self.reset_timer()
         self.start_position = (-4.5, -4.5, 0.0)
@@ -49,6 +53,21 @@ class Evaluator(Node):
         else:
             return 2  # Area 2: Everything else
 
+    def publish_area(self, area):
+        """Publish the current area as a string."""
+        area_msg = String()
+
+        if area == 1:
+            area_msg.data = "1"
+        elif area == 2:
+            area_msg.data = "2"
+        elif area == 3:
+            area_msg.data = "3"
+
+        # Publish the message to the topic
+        self.area_publisher.publish(area_msg)
+        self.get_logger().info(f"Published: {area_msg.data}")
+
     def odom_callback(self, msg):
         # Get the current position from odometry
         current_position = (msg.pose.pose.position.x, 
@@ -60,6 +79,9 @@ class Evaluator(Node):
         # Only proceed if the area has changed
         if self.current_area == self.previous_area:
             return  # Do nothing if the area hasn't changed
+
+        # Publish the current area
+        self.publish_area(self.current_area)
 
         # Start the timer when transitioning from Area 1 to Area 2
         if self.previous_area == 1 and self.current_area == 2:
