@@ -4,6 +4,7 @@ import rclpy
 from rclpy.node import Node
 from geometry_msgs.msg import Twist
 from sensor_msgs.msg import Range
+from std_msgs.msg import String  # To subscribe to the robot's area info
 
 class MazeSolver(Node):
     def __init__(self):
@@ -18,11 +19,17 @@ class MazeSolver(Node):
         self.create_subscription(Range, '/right_ultrasonic_sensor_range', self.right_sensor_callback, 10)
         self.create_subscription(Range, '/rear_ultrasonic_sensor_range', self.rear_sensor_callback, 10)
 
+        # Subscribe to the topic that publishes the current area
+        self.create_subscription(String, '/robot_area', self.area_callback, 10)
+
         # Initialize sensor data
         self.front_distance = float('inf')
         self.left_distance = float('inf')
         self.right_distance = float('inf')
         self.rear_distance = float('inf')
+
+        # Initialize area data
+        self.current_area = None
 
         # Define the movement control loop timer
         self.timer = self.create_timer(0.1, self.control_loop)
@@ -39,24 +46,41 @@ class MazeSolver(Node):
     def rear_sensor_callback(self, msg):
         self.rear_distance = msg.range
 
+    def area_callback(self, msg):
+        """Callback function to update the robot's current area."""
+        self.current_area = msg.data  # Update the area (should be "1", "2", or "3")
+        self.get_logger().info(f"Current area: {self.current_area}")
+
     def control_loop(self):
+        """Control logic for navigating through the maze."""
         twist_msg = Twist()
 
-        # Basic maze-solving logic
-        # Move forward if there's no obstacle in front
-        if self.front_distance > 0.5:  # Adjust threshold as needed
-            twist_msg.linear.x = 0.2  # Move forward
-            twist_msg.angular.z = 0.0  # No rotation
-        else:
-            # Turn based on the sensor readings
-            if self.left_distance > self.right_distance:
-                twist_msg.linear.x = 0.0  # Stop forward movement
-                twist_msg.angular.z = 0.5  # Turn left
-            else:
-                twist_msg.linear.x = 0.0  # Stop forward movement
-                twist_msg.angular.z = -0.5  # Turn right
+        # Check if the robot has reached Area 3 or Area 1
+        if self.current_area == "3":
+            self.get_logger().info("Robot has reached the final position (Area 3), stopping.")
+            twist_msg.linear.x = 0.0  # Stop the robot
+            twist_msg.angular.z = 0.0
+            self.cmd_vel_pub.publish(twist_msg)
+            return
 
-        # Publish the velocity command
+        if self.current_area == "1" and self.front_distance < 0.5:
+            self.get_logger().info("Robot is back at the start position (Area 1), stopping.")
+            twist_msg.linear.x = 0.0  # Stop the robot
+            twist_msg.angular.z = 0.0
+            self.cmd_vel_pub.publish(twist_msg)
+            return
+
+        # Example movement logic: Simple obstacle avoidance
+        if self.front_distance < 0.5:
+            # If an obstacle is detected in front, turn right
+            twist_msg.linear.x = 0.0
+            twist_msg.angular.z = -0.5
+        else:
+            # Otherwise, move forward
+            twist_msg.linear.x = 0.2
+            twist_msg.angular.z = 0.0
+
+        # Publish the movement command
         self.cmd_vel_pub.publish(twist_msg)
 
 def main(args=None):

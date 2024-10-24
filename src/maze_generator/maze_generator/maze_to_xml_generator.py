@@ -1,6 +1,10 @@
 import math
 import matplotlib.pyplot as plt
 import random
+
+
+#edit the world_file_path according to your configuration
+world_file_path='~/micro_mouse_compertition/micro_mouse/src/micro_mouse_bringup/worlds/maze.world.xml'
 def generate_wall_model(x, y, yaw):
     return f"""
     <model name="wall_{x}_{y}">
@@ -258,7 +262,9 @@ for segment in line_segments:
     model_params.append(tuple(segment_list))
 
 # Save the models to an XML file
-save_models_to_file('/home/chandansinghchauhan/programming/robotics/micro_mouse/src/micro_mouse_bringup/worlds/maze.world.xml', model_params)
+
+#edit the path accoridng to your configuration
+save_models_to_file(world_file_path, model_params)
 
 # Plotting x, y in Cartesian coordinates
 # x_0 = [x for (x, y, yaw) in model_params if yaw == 0]
@@ -279,4 +285,4 @@ save_models_to_file('/home/chandansinghchauhan/programming/robotics/micro_mouse/
 # plt.grid(True)
 # plt.show()
 
-print("Plot created and displayed.")
+print("New Maze Generated")
