@@ -23,13 +23,16 @@ If you don’t have ROS2 installed, follow these steps:
 
 Step 2: Clone the Repository
 1. Open a terminal and navigate to the directory to set up your workspace (inside the micro_mouse_competition directory).
-2. Clone the competition Git repository (replace <repo-link> with the actual repository link):
+```bash
+cd micro_mouse_competition
+```
+3. Clone the competition Git repository (replace <repo-link> with the actual repository link):
 
    ```bash
    git clone https://github.com/chad9012/micro_mouse.git
    ```
 
-3. Navigate into the workspace:
+4. Navigate into the workspace:
 
    ```bash
    cd micro_mouse  # This folder should contain a 'src' folder.
