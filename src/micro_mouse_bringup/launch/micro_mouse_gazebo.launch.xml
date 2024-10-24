@@ -2,7 +2,7 @@
     <let name="urdf_path" value="$(find-pkg-share micro_mouse_description)/urdf/micro_mouse.urdf.xacro" />
     <let name="rviz_config_path" value="$(find-pkg-share micro_mouse_bringup)/rviz/urdf_config.rviz" />
     <include file="$(find-pkg-share gazebo_ros)/launch/gazebo.launch.py">
-    <arg name="world" value="$(find-pkg-share micro_mouse_bringup)/worlds/maze.world"/>
+    <arg name="world" value="$(find-pkg-share micro_mouse_bringup)/worlds/maze.world.xml"/>
     </include>
     
 
@@ -13,7 +13,7 @@
     
     <node pkg="gazebo_ros" exec="spawn_entity.py" args="-topic robot_description -entity micro_mouse -x -4.5 -y -4.5 -z 0.0"/>
 
-    <node pkg="rviz2" exec="rviz2" output="screen" args="rviz_config_path">
-    </node>
+    <!-- <node pkg="rviz2" exec="rviz2" output="screen" args="rviz_config_path">
+    </node> -->
 
 </launch>

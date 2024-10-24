@@ -1,0 +1,41 @@
+import rclpy
+from rclpy.node import Node
+from nav_msgs.msg import Odometry
+
+class OdomSubscriber(Node):
+    def __init__(self):
+        super().__init__('odom_subscriber')
+        
+        # Create a subscriber for the odometry topic
+        self.subscription = self.create_subscription(
+            Odometry,
+            '/odom',  # Change this to the appropriate topic name if necessary
+            self.odom_callback,
+            10
+        )
+        
+        self.subscription  # prevent unused variable warning
+
+    def odom_callback(self, msg):
+        # Extract position and orientation from the odometry message
+        position = msg.pose.pose.position
+        orientation = msg.pose.pose.orientation
+        
+        # Log the position and orientation
+        self.get_logger().info(f'Position -> x: {position.x}, y: {position.y}, z: {position.z}')
+        self.get_logger().info(f'Orientation -> x: {orientation.x}, y: {orientation.y}, z: {orientation.z}, w: {orientation.w}')
+
+
+def main(args=None):
+    rclpy.init(args=args)
+    odom_subscriber = OdomSubscriber()
+    
+    rclpy.spin(odom_subscriber)
+    
+    # Destroy the node explicitly
+    odom_subscriber.destroy_node()
+    rclpy.shutdown()
+
+
+if __name__ == '__main__':
+    main()

@@ -258,7 +258,7 @@ for segment in line_segments:
     model_params.append(tuple(segment_list))
 
 # Save the models to an XML file
-save_models_to_file('/home/chandansinghchauhan/programming/robotics/simulator_ws/src/micro_mouse_bringup/worlds/maze.world.xml', model_params)
+save_models_to_file('/home/chandansinghchauhan/programming/robotics/micro_mouse/src/micro_mouse_bringup/worlds/maze.world.xml', model_params)
 
 # Plotting x, y in Cartesian coordinates
 # x_0 = [x for (x, y, yaw) in model_params if yaw == 0]
