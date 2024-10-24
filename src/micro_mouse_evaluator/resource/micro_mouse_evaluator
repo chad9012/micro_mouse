@@ -1,0 +1,30 @@
+Micro Mouse Robot Evaluation Instructions
+Welcome to the Micro Mouse Robot Competition! This guide will explain how the evaluation process works so you can understand what to expect during your runs.
+
+Overview of the Evaluation Process
+The purpose of this evaluation is to measure how quickly your robot can navigate from a starting position to a final target position in the maze. Here’s how the evaluation works:
+
+Starting Position: Your robot will begin its run at the coordinates (-4.5, -4.5, 0).
+
+Final Position: The goal is to reach the coordinates (4.5, 4.5, 0).
+
+Timer Functionality:
+
+A timer will start as soon as your robot leaves the starting position.
+The timer will stop when your robot reaches the final position.
+The elapsed time for each run will be recorded.
+Handling Position Accuracy:
+
+To account for any small errors or noise in your robot’s position (like sensor inaccuracies), a margin of ±0.1 units will be considered. This means your robot can still be detected as having reached the starting or final position even if it is slightly off.
+Number of Runs:
+
+You will have a total of three runs to complete. After each run, the evaluator will check the time taken.
+The best time from these three runs will be displayed.
+Resetting the Timer:
+
+Once you complete the three runs, the timer and variables will reset, allowing you to start again for another set of runs. The best time from the previous attempts will be shown before the next set starts.
+Key Points to Remember:
+Make sure your robot accurately detects the starting and final positions to optimize your time.
+Take note of the noise margin; minor inaccuracies in position reporting are normal.
+Focus on improving your strategy in each run to achieve the best possible time.
+Thank you for participating, and good luck with your runs! Let’s see how quickly your robot can navigate the maze!

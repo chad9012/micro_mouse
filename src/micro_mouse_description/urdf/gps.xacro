@@ -1,0 +1,54 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+    <!-- Define properties for GPS sensor dimensions -->
+    <xacro:property name="gps_length" value="0.05"/>
+    <xacro:property name="gps_width" value="0.05"/>
+    <xacro:property name="gps_height" value="0.005"/>
+
+    <!-- Xacro macro to define a GPS sensor -->
+    <xacro:macro name="gps_sensor" params="sensor_name link_xyz link_rpy">
+        <!-- Define the sensor link -->
+        <link name="${sensor_name}_link">
+            <visual>
+                <geometry>
+                    <box size="${gps_length} ${gps_width} ${gps_height}"/>
+                </geometry>
+                <material name="red"/>
+            </visual>
+            <collision>
+                <geometry>
+                    <box size="${gps_length} ${gps_width} ${gps_height}"/>
+                </geometry>
+            </collision>
+            <xacro:box_inertia m="0.1" l="${gps_length}" w="${gps_width}" h="${gps_height}" xyz="0 0 0" rpy="0 0 0"/>
+        </link>
+
+        <!-- Define the GPS sensor -->
+        <gazebo>
+            <sensor name="${sensor_name}_gps" type="gps">
+                <always_on>true</always_on>
+                <update_rate>30.0</update_rate>
+            <!-- Plugin to interface GPS data with ROS2 -->
+            <plugin name="my_gps_plugin" filename="libgazebo_ros_gps_sensor.so">
+                <ros>
+                    <namespace>/gps</namespace>
+                    <remapping>~/out:=data</remapping>
+                </ros>
+            </plugin>
+            </sensor>
+        </gazebo>
+
+        <!-- Joint attaching the sensor to the robot -->
+        <joint name="base_${sensor_name}_joint" type="fixed">
+            <parent link="base_link"/>  <!-- Change parent link if necessary -->
+            <child link="${sensor_name}_link"/>
+            <origin xyz="${link_xyz}" rpy="${link_rpy}"/>
+        </joint>
+
+    </xacro:macro>
+
+    <!-- Example of how to instantiate the GPS sensor -->
+    <xacro:gps_sensor sensor_name="gps_sensor" link_xyz="0 0 ${base_height}" link_rpy="0 0 0"/>
+
+</robot>
