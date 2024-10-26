@@ -149,6 +149,6 @@ Step 8: Troubleshooting
 Good luck with the competition!
 
 Resources:
-https://docs.ros.org/en/humble/Tutorials.html
-https://youtube.com/playlist?list=PLLSegLrePWgJudpPUof4-nVFHGkB62Izy&si=f-paI3-NMJy10J57
-https://www.udemy.com/share/103Dzm3@hxCBvGwbOsHQopi0FpMp9CgVsPgup19FupXFfb1TopvkikICcdaKVxp84-3zHMcl5w==/
+1. https://docs.ros.org/en/humble/Tutorials.html
+2. https://youtube.com/playlist?list=PLLSegLrePWgJudpPUof4-nVFHGkB62Izy&si=f-paI3-NMJy10J57
+3. https://www.udemy.com/share/103Dzm3@hxCBvGwbOsHQopi0FpMp9CgVsPgup19FupXFfb1TopvkikICcdaKVxp84-3zHMcl5w==/
