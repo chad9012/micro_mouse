@@ -113,7 +113,7 @@ Run the micro mouse evaluator and maze solver using the following commands in se
 - Maze Solver Node: This node controls the robot’s movement logic that you implemented:
 
    ```bash
-   ros2 run micro_mouse_controller maze_solver
+   ros2 run micro_mouse_controller maze_controller
    ```
 
 Step 7: Testing and Submitting
