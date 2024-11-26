@@ -4,7 +4,7 @@ import random
 
 
 #edit the world_file_path according to your configuration
-world_file_path='~/micro_mouse_compertition/micro_mouse/src/micro_mouse_bringup/worlds/maze.world.xml'
+world_file_path='/home/chandansinghchauhan/programming/robotics/micro_mouse/src/micro_mouse_bringup/worlds/maze.world.xml'
 def generate_wall_model(x, y, yaw):
     return f"""
     <model name="wall_{x}_{y}">
