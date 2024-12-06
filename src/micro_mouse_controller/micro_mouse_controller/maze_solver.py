@@ -5,6 +5,8 @@ from rclpy.node import Node
 from geometry_msgs.msg import Twist
 from sensor_msgs.msg import Range
 from std_msgs.msg import String  # To subscribe to the robot's area info
+from nav_msgs.msg import Odometry
+import math
 
 class MazeSolver(Node):
     def __init__(self):
@@ -21,12 +23,20 @@ class MazeSolver(Node):
 
         # Subscribe to the topic that publishes the current area
         self.create_subscription(String, '/robot_area', self.area_callback, 10)
+        # Subscribe to the /odom topic to get the robot's position
+        self.create_subscription(Odometry, '/odom', self.odom_callback, 10)
+
 
         # Initialize sensor data
         self.front_distance = float('inf')
         self.left_distance = float('inf')
         self.right_distance = float('inf')
         self.rear_distance = float('inf')
+
+        # Initialize odometry data
+        self.robot_x = 0.0
+        self.robot_y = 0.0
+        self.robot_theta = 0.0  # In radians
 
         # Initialize area data
         self.current_area = None
@@ -50,6 +60,29 @@ class MazeSolver(Node):
         """Callback function to update the robot's current area."""
         self.current_area = msg.data  # Update the area (should be "1", "2", or "3")
         self.get_logger().info(f"Current area: {self.current_area}")
+
+    def odom_callback(self, msg):
+        """Callback function to update the robot's position and orientation."""
+        # Extract position
+        self.robot_x = msg.pose.pose.position.x
+        self.robot_y = msg.pose.pose.position.y
+        
+        # Extract orientation (quaternion) and convert to yaw (theta)
+        q = msg.pose.pose.orientation
+        self.robot_theta = self.quaternion_to_euler(q.x, q.y, q.z, q.w)
+
+        # Log for debugging
+        self.get_logger().info(f"Position: x={self.robot_x}, y={self.robot_y}, theta={self.robot_theta:.2f} radians")
+
+
+    def quaternion_to_euler(self, x, y, z, w):
+        """
+        Convert quaternion (x, y, z, w) to yaw (theta in radians).
+        """
+        # Yaw calculation (robot's orientation in 2D plane)
+        siny_cosp = 2 * (w * z + x * y)
+        cosy_cosp = 1 - 2 * (y * y + z * z)
+        return math.atan2(siny_cosp, cosy_cosp)
 
     def control_loop(self):
         """Control logic for navigating through the maze."""
